@@ -13,7 +13,7 @@ export const authMiddleware = (req , res , next) =>{
     if(!token){
         return res.status(401).json({message:"unauthorized"});
     }
-    // Verify token using jwt.verify
+    // Verify token using jwt.verify  //jason web token
     const decoded = jwt.verify(token , process.env.JWT_SECRET);
 
     // Attach decoded user to req.user

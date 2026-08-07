@@ -1,5 +1,6 @@
 //import collection model 
 import Collection from "../model/collection.model.js";
+import Resource from "../model/resources.model.js";
 
 
 // createCollection -- to create a new collection 
@@ -78,3 +79,39 @@ export const deleteCollection = async (req, res) => {
   }
 }
 
+export const getCollectionResources = async (req, res) => {
+    console.log("hit", req.params.id, req.user.id);  // ← add this
+  try {
+    const userId = req.user.id;
+    const collectionId = req.params.id;
+
+    const resources = await Resource.find({ userId, collectionId });
+
+    return res.status(200).json({ resources });
+  } catch(err) {
+    return res.status(500).json({ error: err });
+  }
+}
+export const addResourcesToCollection = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const collectionId = req.params.id;
+    const { resourceIds } = req.body;
+
+    // verify collection belongs to user
+    const collection = await Collection.findOne({ _id: collectionId, userId });
+    if (!collection) return res.status(404).json({ message: "Collection not found" });
+
+    // update all resources — set their collectionId
+    await Resource.updateMany(
+      { _id: { $in: resourceIds }, userId },
+      { $set: { collectionId } }
+    );
+
+    console.log("resources added into collection");
+
+    return res.status(200).json({ message: "Resources added to collection" });
+  } catch(err) {
+    return res.status(500).json({ error: err });
+  }
+}

@@ -84,6 +84,8 @@ const worker = new Worker("Resources", async (job) => {
   // step 5 — embed chunks
   const embeddings = await embedChunks(chunks);
 
+  //chunks = text ---> array / vector of numbers --
+
 
   // step 6 — store in Redis
 

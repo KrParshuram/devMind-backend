@@ -43,8 +43,11 @@ export const query = async (req, res) => {
 
     for(let i=0; i<totalKey;i++){
         const value = await client.get(keys[i]);
+
         const parsedValue = JSON.parse(value);
+
         const score = cosineSimilarity(questionEmbedding , parsedValue.embeddings) ;
+        
         similarityScore.push({...parsedValue , score});
 
 

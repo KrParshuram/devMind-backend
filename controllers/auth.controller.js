@@ -32,6 +32,7 @@ export const signup = async (req, res) =>{
         //step 2. destructure data (name , email , password from body )
         const {name , email , password} = req.body ;
 
+
         //step 3. check in db that  user exists already -- 
 
         let existingUser;
@@ -43,6 +44,7 @@ export const signup = async (req, res) =>{
     
     
     // step 3.5 create hashed password for the user and store everything in db
+    // pass -123456 -- dont store in db -- 
     const hash = await bcrypt.hash(password , 10);
 
     const newUser= await User.create({ name, email, password: hash })
@@ -111,3 +113,5 @@ export const login = async (req,res) =>{
 }
 
 }
+
+

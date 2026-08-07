@@ -162,6 +162,7 @@ export const getResource = async(req, res) =>{
     }
 }
 
+
 export const resource = async(req, res) =>{
 
     try{

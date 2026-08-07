@@ -1,6 +1,6 @@
 import {createResource , getResource , resource,createFileResource,deleteResource} from "../controllers/resource.controller.js";
 import {authMiddleware} from "../middleware/auth.middleware.js";
-import rateLimit from "../middleware/ratelimit.middleware.js";
+import rateLimit from "../middleware/rateLimit.middleware.js";
 import upload from "../middleware/upload.middleware.js";
 import express from 'express';
 

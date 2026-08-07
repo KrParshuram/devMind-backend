@@ -1,7 +1,7 @@
 import express from "express";
 import { query } from "../controllers/query.controller.js";
 import { authMiddleware } from "../middleware/auth.middleware.js";
-import rateLimit from "../middleware/ratelimit.middleware.js";
+import rateLimit from "../middleware/rateLimit.middleware.js";
 
 const router = express.Router();
 

@@ -20,7 +20,7 @@ connectDB();
 
 console.log(process.env.JWT_SECRET);
 
-app.use(cors({ origin: "http://localhost:5173" }));
+app.use(cors({ origin: ["http://localhost:5173","https://devmind-ai-beta.vercel.app"] }));
 // public routes
 app.use("/api/auth", authRouter);
 

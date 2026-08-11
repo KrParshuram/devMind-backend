@@ -9,6 +9,7 @@ import resourceRouter from "./routes/resource.route.js";
 import "./workers/resource.worker.js";
 import queryRouter from "./routes/query.route.js";
 import collectionRouter from "./routes/collection.route.js";
+import chatRouter from "./routes/chat.route.js";
 // import client from "./config/redis.js"
 import cors from "cors";
 
@@ -28,6 +29,8 @@ app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
 
 app.use("/api/user",resourceRouter);
+
+app.use("/api/user",chatRouter);
 
 app.use("/api/collections", collectionRouter);
 

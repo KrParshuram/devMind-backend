@@ -23,7 +23,7 @@ const resourceSchema = new mongoose.Schema({
     sourceUrl:{type:String},
     filePath:{type:String},
     tags:[{type:String, trim:true}],
-    collectionId: {type: mongoose.Schema.Types.ObjectId, ref: 'Collection'} , // no required
+    collectionId: {type: mongoose.Schema.Types.ObjectId, ref: 'Collection',index: true} , // no required
     status:{type:String , enum:["pending" , "processing", "completed" , "failed"]},
     chunkCount:{type:Number },
     createdAt:{type:Date , required:true , default:Date.now}

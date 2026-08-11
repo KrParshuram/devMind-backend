@@ -97,11 +97,12 @@ const worker = new Worker("Resources", async (job) => {
     const key = `chunk:${userId}:${resourceId}:${i}`;
 
     const value = JSON.stringify({
-        text:chunks[i] ,
-        embeddings:embeddings[i],
-        resourceId ,
-        userId,
-        title:resource.title
+    text: chunks[i],
+    embeddings: embeddings[i],
+    resourceId,
+    userId,
+    collectionId: resource.collectionId || null,
+    title: resource.title
     });
 
     pipeline.set(key, value);

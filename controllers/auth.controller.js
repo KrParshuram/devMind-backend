@@ -54,7 +54,7 @@ export const signup = async (req, res) =>{
     // step 4. create jwt token for the user 
     
     const secretKey = process.env.JWT_SECRET;
-    const token = jwt.sign({id: newUser._id, email: newUser.email}, secretKey, { expiresIn: '1h' });
+    const token = jwt.sign({id: newUser._id, email: newUser.email}, secretKey, { expiresIn: '100h' });
 
     //step 5 . return success with token
      
@@ -100,7 +100,7 @@ export const login = async (req,res) =>{
 
     //// Generate JWT
     const secretkey = process.env.JWT_SECRET;
-    const token = jwt.sign({id:user._id , email:user.email} , secretkey ,{ expiresIn: '1h' });
+    const token = jwt.sign({id:user._id , email:user.email} , secretkey ,{ expiresIn: '100h' });
 
     return res.status(200).json({
         name:user.name , 

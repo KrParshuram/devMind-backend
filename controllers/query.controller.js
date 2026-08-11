@@ -1,6 +1,7 @@
 import { CohereClient } from "cohere-ai";
 import client from "../config/redis.js"; 
 import cosineSimilarity from "../services/similarity.service.js"
+import Conversation from "../model/conversation.model.js";  
 
 
 const cohere = new CohereClient({
@@ -75,12 +76,23 @@ export const query = async (req, res) => {
     });
 
     const answer = response.text;
+
+      await Chat.create({
+      userId,
+      question,
+      answer,
+      sources: top5.map(chunk => chunk.title)  // titles of chunks used
+    });
+    
     // 9. return answer
     return res.status(200).json({
-        answer:answer , 
-        message:"successfull"
-    })
+      answer,
+      sources: top5.map(chunk => chunk.title),  // ← add this
+      message: "successful"
+    });
+
   } catch(err) {
     return res.status(500).json({ error: err });
   }
 }
+

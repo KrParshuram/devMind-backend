@@ -9,6 +9,13 @@ const conversationSchema = new mongoose.Schema(
       index: true,
     },
 
+    repoId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "GithubRepo",
+      default: null,
+      index: true,
+    },
+
     title: {
       type: String,
       default: "New Conversation",
@@ -18,7 +25,7 @@ const conversationSchema = new mongoose.Schema(
     knowledgeScope: {
       type: {
         type: String,
-        enum: ["none", "all", "collection"],
+        enum: ["none", "all", "collection", "repository"],
         default: "all",
       },
 
@@ -34,7 +41,16 @@ const conversationSchema = new mongoose.Schema(
   }
 );
 
-conversationSchema.index({ userId: 1, updatedAt: -1 });
+conversationSchema.index({
+  userId: 1,
+  updatedAt: -1,
+});
+
+conversationSchema.index({
+  userId: 1,
+  repoId: 1,
+  updatedAt: -1,
+});
 
 const Conversation = mongoose.model(
   "Conversation",

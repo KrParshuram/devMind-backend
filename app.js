@@ -7,9 +7,11 @@ import authRouter from "./routes/auth.route.js";
 import userRouter from "./routes/user.route.js";
 import resourceRouter from "./routes/resource.route.js";
 import "./workers/resource.worker.js";
+import "./workers/repo.worker.js";
 import queryRouter from "./routes/query.route.js";
 import collectionRouter from "./routes/collection.route.js";
 import chatRouter from "./routes/chat.route.js";
+import gitRouter from "./routes/github.route.js"
 // import client from "./config/redis.js"
 import cors from "cors";
 
@@ -32,9 +34,12 @@ app.use("/api/user",resourceRouter);
 
 app.use("/api/user",chatRouter);
 
+app.use("/api/github" , gitRouter);
+
 app.use("/api/collections", collectionRouter);
 
 app.use("/api/query", queryRouter);
+
 
 
 // error handler — always last

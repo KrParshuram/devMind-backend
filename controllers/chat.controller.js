@@ -1,14 +1,23 @@
 import mongoose from "mongoose";
 import Conversation from "../model/conversation.model.js";
 import Collection from "../model/collection.model.js";
+// import Collection from "../model/collection.model.js";
+import GithubRepo from "../model/github.repo.model.js";
 import Message from "../model/Message.model.js";
 
 export const createConversation = async (req, res) => {
   try {
     const userId = req.user.id;
-    const { knowledgeScope } = req.body;
 
-    // Step 1: Validate knowledgeScope
+    const {
+      knowledgeScope,
+      repoId = null,
+    } = req.body;
+
+    // -----------------------------------------
+    // 1. Validate knowledgeScope
+    // -----------------------------------------
+
     if (!knowledgeScope || !knowledgeScope.type) {
       return res.status(400).json({
         message: "knowledgeScope is required",
@@ -17,29 +26,67 @@ export const createConversation = async (req, res) => {
 
     const { type, collectionId } = knowledgeScope;
 
-    // Step 2: Validate scope type
-    if (!["all", "none", "collection"].includes(type)) {
+    // -----------------------------------------
+    // 2. Validate scope type
+    // -----------------------------------------
+
+    if (!["all", "none", "collection", "repository"].includes(type)) {
       return res.status(400).json({
         message: "Invalid knowledgeScope type",
       });
     }
 
-    // Step 3: Collection-specific validation
+    // -----------------------------------------
+    // 3. Repository validation
+    // -----------------------------------------
+
+    if (type === "repository") {
+
+      // repoId is required
+      if (!repoId) {
+        return res.status(400).json({
+          message: "repoId is required for repository scope",
+        });
+      }
+
+      // Validate ObjectId
+      if (!mongoose.Types.ObjectId.isValid(repoId)) {
+        return res.status(400).json({
+          message: "Invalid repoId",
+        });
+      }
+
+      // Check repository belongs to user
+      const repo = await GithubRepo.findOne({
+        _id: repoId,
+        userId,
+      });
+
+      if (!repo) {
+        return res.status(404).json({
+          message: "Repository not found",
+        });
+      }
+    }
+
+    // -----------------------------------------
+    // 4. Collection validation
+    // -----------------------------------------
+
     if (type === "collection") {
+
       if (!collectionId) {
         return res.status(400).json({
           message: "collectionId is required for collection scope",
         });
       }
 
-      // Prevent invalid MongoDB ObjectId from reaching the DB
       if (!mongoose.Types.ObjectId.isValid(collectionId)) {
         return res.status(400).json({
           message: "Invalid collectionId",
         });
       }
 
-      // Check ownership
       const collection = await Collection.findOne({
         _id: collectionId,
         userId,
@@ -52,25 +99,45 @@ export const createConversation = async (req, res) => {
       }
     }
 
-    // Step 4: Create conversation
+    // -----------------------------------------
+    // 5. Create conversation
+    // -----------------------------------------
+
     const newConversation = await Conversation.create({
       userId,
+
+      repoId: type === "repository"
+        ? repoId
+        : null,
 
       title: "New Conversation",
 
       knowledgeScope: {
         type,
-        collectionId: type === "collection" ? collectionId : null,
+
+        collectionId:
+          type === "collection"
+            ? collectionId
+            : null,
       },
     });
 
-    // Step 5: Return response
+    // -----------------------------------------
+    // 6. Return response
+    // -----------------------------------------
+
     return res.status(201).json({
       message: "Conversation created successfully",
+
       conversation: newConversation,
     });
+
   } catch (error) {
-    console.error("Create conversation error:", error);
+
+    console.error(
+      "Create conversation error:",
+      error
+    );
 
     return res.status(500).json({
       message: "Problem while creating conversation",
@@ -86,7 +153,7 @@ export const getConversations = async (req, res) => {
     const conversations = await Conversation.find({
       userId,
     })
-      .select("title knowledgeScope createdAt updatedAt")
+      .select("title repoId knowledgeScope createdAt updatedAt")
       .sort({ updatedAt: -1 });
 
     return res.status(200).json({
